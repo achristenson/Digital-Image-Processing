@@ -30,7 +30,7 @@ Problem Set 2
   
 Problem Set 3
   - 2D convolution with zero-padding and periodic boundaries
-  - Building a homemade conv2 (the built in matlab function for 2D convolution
+  - Building a homemade conv2 (the built in matlab function for 2D convolution)
   - Template matching w/convolution
   - Gaussian noise filters
   

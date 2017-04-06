@@ -6,12 +6,12 @@ Originally written in Matlab, I may port it to python later and upload the pdf o
 Topics covered in:
 
 Problem Set 1
-  Lexicographic ordering
-  Pixel distances (Euclidean, 4 and 8 nearest neighbor methods)
-  Boundary conditions: periodic extending and zero-padding
-  Histogram calculation
-  Histogram equalization - by parts and dynamic
-  Image transformation - rotation, translation, shearing
+  -Lexicographic ordering
+  -Pixel distances (Euclidean, 4 and 8 nearest neighbor methods)
+  -Boundary conditions: periodic extending and zero-padding
+  -Histogram calculation
+  -Histogram equalization - by parts and dynamic
+  -Image transformation - rotation, translation, shearing
   
 Problem Set 2
   Image morphology

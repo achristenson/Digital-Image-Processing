@@ -1,0 +1,33 @@
+\newcounter{hw}
+\newcounter{prob}
+
+\makeatletter
+\renewcommand{\section}{\@startsection
+  {section}
+  {1}
+  {-5mm}
+  {1pt}
+  {1pt}
+  {\Large\bfseries}
+}
+\makeatother
+
+\renewcommand{\thesection}{}
+
+\newcommand{\newproblem}{
+  \setcounter{equation}{0}
+  %\section{Problem~\arabic{hw}.\arabic{section}}
+  \section{}
+} 
+
+
+\makeatletter
+%\renewcommand{\theenumi}{\alph{enumi}}
+%\renewcommand{\labelenumi}{(\theenumi)}
+%\renewcommand{\theenumii}{\roman{enumii}}
+%\renewcommand{\labelenumii}{(\theenumi.\theenumii)}
+\renewcommand{\theequation}{\arabic{hw}.\arabic{section}.\arabic{equation}}
+\renewcommand{\thesection}{Problem \arabic{hw}.\arabic{section}}
+
+\makeatother
+

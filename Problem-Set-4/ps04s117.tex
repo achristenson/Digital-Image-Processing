@@ -1,0 +1,169 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage,graphicx,amsmath,subfigure}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,
+	bookmarks=true,
+	pdfstartview={FitH},
+	urlcolor=blue,
+	citecolor=blue,       
+	filecolor=blue}
+\input{hwdef}
+\setcounter{hw}{4}  
+
+
+\newcommand{\redtt}[1]{{\color{red} \texttt{#1}}}
+\newcommand{\argmin}{\operatornamewithlimits{arg\,min}}
+
+
+\begin{document}
+\begin{center}
+  \begin{large}
+    \textbf{  EE 133 - Digital Image Processing \\
+      Department of Electrical and Computer Engineering \\
+      Tufts University Spring 2017 \\
+      Problem Set \#\thehw}
+  \end{large}
+\end{center}
+
+\noindent Distributed: March 7, 2017 \hfill Due: March 17, 2017
+
+\hrule 
+\vspace{.2in}
+
+%%%%%%%%%%%
+\section{}\label{ps04p01}
+%%%%%%%%%%%
+Compute the 2D Fourier transform of the continuous 2D signal
+\begin{displaymath}
+	f(x,y)  = 
+	\begin{cases}
+		1 & x>y \\
+		0 & \text{else}
+	\end{cases}
+\end{displaymath}
+
+
+%%%%%%%%%%%
+\section{}\label{ps04p02}
+%%%%%%%%%%%
+In this problem consider a $64 \times 64$ image defined as
+\begin{displaymath}
+	g(m,n) = f(m,n) - \frac{1}{64^2}\sum_{m=1}^{64}\sum_{n=1}^{64}f(m,n)
+\end{displaymath}
+where
+\begin{equation}
+	\label{eq:2}
+	f(m,n) =
+	\begin{cases}
+		1 & m \geq n \text{ with } m,n = 1, 2, \dots 64 \\
+		0 & \text{else}
+	\end{cases}
+\end{equation}
+\begin{enumerate}
+	\item What is the relationship between the 2D DFT of $g$ and that of $f$? 
+	\item Compute and plot the 2D DFT of $g$.
+	
+	\item According to the results of the first problem, we would expect to see one line when we plot the DFT $g$, but we see three lines.  First, for the expected line, what is the slope and why?  Second, why the other two lines? 
+\end{enumerate}
+
+
+%%%%%%%%%%%
+\section{}\label{ps04p03}
+%%%%%%%%%%%
+A very commonly used transform in image processing closely related to the Fourier is known as the \textit{Discrete Cosine Transform} (DCT) of which there are four varieties known as DCT-I through DCT-IV.  We will deal here with DCT-II for which the forward transform of an $N \times N$ image $f(m,n)$ into the transform domain image $F(u,v)$ is
+\begin{equation}
+	\label{eq:6p0}
+	F(u,v)  = \frac{2c(u)c(v)}{N} 
+	\sum_{m=0}^{N-1}\sum_{n=0}^{N-1} 
+	\cos\left(\frac{2m+1}{2N}\pi u\right)
+	\cos\left(\frac{2n+1}{2N}\pi v\right) f(m,n)
+	%f(u,v) & = \frac{2}{N}  
+	%\sum_{u=0}^{N-1}\sum_{v=0}^{N-1} c(u)c(v)
+	%\cos\left(\frac{2m+1}{2N}\pi u\right)
+	%\cos\left(\frac{2n+1}{2N}\pi v\right) F(u,v)
+\end{equation}
+with $c(k) = 1/\sqrt{2}$ if $k=0$ and $c(k) = 1$ for $k \neq 0$.  In this equation, $m$, $n$, $u$ and $v$ are all integers from $0$ to $N-1$.  It turns out that the DCT is closely related to the DFT and, perhaps not too surprisingly, there are methods based on the Fast Fourier Transform to obtain Fast DCTs.  In Matlab the function call is \redtt{dct2} with something similar is available via SciPY in Python.  For the remainder of this problem, you can feel free to use these tools.  That is, you \textit{do not} have to write your own DCT routines (though you certainly may if you wish).  
+
+\begin{enumerate}
+	\item The DCT may be thought of as the representation of an $N \times N$ image $F(u,v)$ in terms of $N^2$ ``basis images'' $B_{m,n}(u,v)$.  Identify these basis functions and, for an $8 \times 8$ image, plot them.
+	
+	\item Show empirically\footnote{In other words, show this using Matlab as opposed to proving it with pencil and pape} for $N=8$ that these basis images are orthogonal meaning that
+	\begin{equation}
+		\label{eq:6p1}
+		\sum_{u=0}^{N-1}\sum_{v=0}^{N-1} B_{m,n}(u,v)B_{p,q}(u,v) = \delta(m-p)\delta(n-q).
+	\end{equation}
+	
+	\item It turns out that \eqref{eq:6p1} is true for any $N$ though proving it rigorously is really quite tedious.  Nonetheless, assuming that \eqref{eq:6p1} is true, explain how to invert the DCT-II.  More specifically provide an equation like \eqref{eq:6p0} for finding $f(m,n)$ from $F(u,v)$. In Matlab, the relevant function is \redtt{idct2}. 
+	
+	\item To a (very) rough first approximation, the JPEG compression scheme operates according to the following algorithm 
+	\begin{enumerate}
+		\item Break the image up into $8 \times 8$ blocks (for here we assume all images contain a multiple of eight rows and columns).
+		\item For each block, take the DCT-II and keep only those coefficients that are above some threshold setting all others to zero.
+		\item Encode the indices of the nonzero elements of each block along with the values and store this information in a file.
+	\end{enumerate}
+	To decode an image then, we merely reconstruct each block from the information in the file and take the inverse DCT to get an approximation of the original $8 \times 8$ block of pixels.
+	
+	\vspace{.1in}
+	
+	For this problem, implement your own version of JPEG by breaking the image into blocks, taking the DCT, zeroing small elements and then taking the inverse DCT to recover the image.  Test your method on the \redtt{cameraman} image included with this problem set being sure to explain in as quantitative a manner as possible how accuracy of the reconstructed image is impacted by the number of zero coefficients in the compressed image.  The evaluation should be done using a wide range of thresholds and, with $f(m,n)$ denoting the exact image and $f_\tau(m,n)$ the one obtained after compression using a threshold $\tau$, use the following metric as a measure of accuracy:
+	   \begin{displaymath}
+			d(\tau) = \frac{\sum_{m,n} ({f}_{\tau}(m,n)-f(m,n))^2}
+	{\sum_{m,n} f(m,n)^2}
+	\end{displaymath}
+	
+\end{enumerate}
+
+%%%%%%%%%%%
+\section{}\label{ps04p04}
+%%%%%%%%%%%
+Here we want to investigate how one can build gradient-based filters that are sensitive to edges in directions other than vertical and horizontal. As a first approach we can think about a brute force use of Fourier properties.  Specifically, we know that in continuous space at least, the Fourier transform of a rotated version of an image is the rotation of the Fourier original transform.  Mathematically:
+\begin{equation}
+{\cal F}\left\{f(Rr) \right\} = F(Rk)
+\end{equation}
+where
+\begin{equation}
+R = \begin{bmatrix}
+\cos\theta & \sin\theta \\ -\sin\theta & \cos\theta
+\end{bmatrix} \;\;\;\;
+r =
+\begin{bmatrix}
+x\\y
+\end{bmatrix} \;\;\;\;
+k =
+\begin{bmatrix}
+u\\v
+\end{bmatrix}
+\end{equation}
+and $\theta$ is the angle of rotation.
+\begin{enumerate}
+	\item Explain how this fact can be used to build filters are sensitive to edges oriented in a direction other than vertical or horizontal.
+	\item Suppose we used as our initial edge filter the derivative of a Gaussian:
+	\begin{equation}
+	h(x,y) = \frac{\partial}{\partial x} 
+	\left\{ \frac{1}{\sqrt{2\pi\sigma^2}}
+	e^{-\frac{x^2+y^2}{2\sigma^2}}\right\}
+	\end{equation}
+	Find an expression for the edge filter that is oriented $\theta$ radians off of the $x$ axis.  Plot using Matlab both the filter itself as well as its Fourier transform (or the amplitude of the transform) to verify that your results are correct.
+\end{enumerate}
+
+%%%%%%%%%%%
+\section{}\label{ps04p05}
+%%%%%%%%%%%
+Here we look at a classic approach to building filters that are sensitive to edges in different orientations, known as ``steerable filters.'' Zipped with this problem set is an old, but classic, paper on this topic.  While you are certainly free to read the whole paper, this problem deals with bits and pieces that I hope are accessible to everyone in the class.
+\begin{enumerate}
+	\item Equation (4) on page 3 of the paper says that you can build a steerable filter using linear combinations of $x$ and $y$ derivatives of a Gaussian.  In the last problem, you showed a different way to build an oriented filter using just the $x$ derivative.  What is going on here?  How are the two methods related?
+	
+	\item Explain in words what the authors are trying to accomplish in Section 5.1 and what equation (19) has to do with this?
+	
+	\item Using the $G_4$ and $H_4$ filters discussed in Appendix G, implement in Matlab the ideas in Section 5.1.1 and show that it works for the two test images in Figure 9 of the paper.  Specifically for each of the images to be analyzed, you should:
+	\begin{enumerate}
+		\item Build the quadrature filters $G_4$ and $H_4$.  You will have to figure out what the right level of discretization is here.
+		\item For all angles of interest, convolve these filters with the image under consideration to obtain $G_4^\theta$ and $H_4^\theta$.  
+		\item Compute $E_4(\theta)$ using the formula (18) in the paper.  Note that for each $\theta$, $E_4$ will be an entire image.  Thus you will have a stack of images for this problem.  
+	\end{enumerate}  
+	Explain (including convincing plots) how the data in the $E_4$ image stack can be used to determine the orientation of one of the pixels in the vertical line as well as the distribution of orientations at the center pixel in the cross image.  	Try it now on a test image like that in Figure 9-b, but where the top half of the vertical line is removed (i.e. a ``T'').  Why are the results not correct?
+\end{enumerate}
+
+
+\end{document}
